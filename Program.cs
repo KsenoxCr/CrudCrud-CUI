@@ -17,11 +17,11 @@ class Program
             Console.CursorVisible = false;
 
             string startTitle = """
-        CrudCrud CUI Työkalu
-        --------------------
+        CrudCrud CUI Tool
+        -----------------
 
         """;
-            string[] startMenu = { "----> Aloita <----", "----> Lopeta <----" };
+            string[] startMenu = { "----> Start <----", "----> Exit <----" };
 
             Menu.PrintMenu(startTitle, startMenu);
 
@@ -30,8 +30,8 @@ class Program
             if (selection == startMenu[1])
                 return;
 
-            string optionsTitle = "--- Valitse toiminto (↑,↓) ---";
-            string[] options = { "Hae", "Lisää", "Muokkaa", "Poista", "Lopeta" };
+            string optionsTitle = "--- Select action (↑,↓) ---";
+            string[] options = { "Fetch", "Add", "Edit", "Delete", "Exit" };
 
             string endpoint = args[0];
             string resource = args[1];
@@ -45,7 +45,7 @@ class Program
 
                 switch (selection)
                 {
-                    case "Lisää":
+                    case "Add":
                         try
                         {
                             await APIClient.HTTPRequest(url, "POST", null, Menu.CreatePayLoad());
@@ -53,14 +53,14 @@ class Program
                         catch (HttpRequestException e)
                         {
                             Console.Clear();
-                            Console.WriteLine("Lisääminen epäonnistui sillä");
+                            Console.WriteLine("Adding failed because");
                             Console.WriteLine(e.Message);
                             return;
                         }
                         Console.Clear();
-                        Console.WriteLine("Lisääminen onnistui!");
+                        Console.WriteLine("Adding succeeded!");
                         break;
-                    case "Muokkaa":
+                    case "Edit":
                         try
                         {
                             var result = await Menu.ChooseObject(url);
@@ -73,13 +73,13 @@ class Program
                         catch (HttpRequestException e)
                         {
                             Console.Clear();
-                            Console.WriteLine("Muokkaaminen epäonnistui sillä");
+                            Console.WriteLine("Editing failed because");
                             Console.WriteLine(e.Message);
                             return;
                         }
-                        Console.WriteLine("Muokkaaminen onnistui!");
+                        Console.WriteLine("Editing succeeded!");
                         break;
-                    case "Poista":
+                    case "Delete":
                         try
                         {
                             var result = await Menu.ChooseObject(url);
@@ -92,14 +92,14 @@ class Program
                         catch (HttpRequestException e)
                         {
                             Console.Clear();
-                            Console.WriteLine("Poistaminen epäonnistui sillä");
+                            Console.WriteLine("Deletion failed because");
                             Console.WriteLine(e.Message);
                             return;
                         }
                         Console.Clear();
-                        Console.WriteLine("Poistaminen onnistui!");
+                        Console.WriteLine("Deletion succeeded!");
                         break;
-                    case "Lopeta":
+                    case "Exit":
                         return;
                 }
 
@@ -108,14 +108,14 @@ class Program
                 Stopwatch timer = new();
                 timer.Start();
 
-                if (selection == "Hae")
+                if (selection == "Fetch")
                     Console.Clear();
                 else
                     Console.WriteLine();
 
                 CancellationTokenSource cts = new();
 
-                Task loading = Task.Run(() => Menu.LoadingAnimation(cts.Token, "Haetaan tietoja"));
+                Task loading = Task.Run(() => Menu.LoadingAnimation(cts.Token, "Fetching data"));
 
                 string response;
 
@@ -126,7 +126,7 @@ class Program
                 catch (HttpRequestException e)
                 {
                     Console.Clear();
-                    Console.WriteLine("Hakeminen epäonnistui sillä");
+                    Console.WriteLine("Fetching failed because");
                     Console.WriteLine(e.Message);
                     return;
                 }
@@ -147,12 +147,12 @@ class Program
                 Console.Clear();
 
                 if (response == "[]")
-                    Console.WriteLine("Yhtään oliota ei ole vielä luotu");
+                    Console.WriteLine("No objects created yet");
                 else
                     Menu.PrintMultiline(Menu.JSONPrettyPrint(response));
 
                 Console.ForegroundColor = Menu.selectionColor;
-                Console.WriteLine("\nPaina mitä tahansa näppäintä jatkaaksesi...");
+                Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey(true);
                 Console.ResetColor();
             }
@@ -161,7 +161,7 @@ class Program
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Käsittelemätön poikkeus metodissa Main: {e.Message}");
+            Console.WriteLine($"Unhandled exception in Main method: {e.Message}");
             Console.WriteLine(e.StackTrace);
             Console.ResetColor();
         }

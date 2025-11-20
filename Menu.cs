@@ -112,15 +112,15 @@ class Menu
             while (true)
             {
                 Console.CursorVisible = true;
-                Console.Write("Syötä ominaisuuden nimi: ");
+                Console.Write("Enter attribute name: ");
                 attribName = Console.ReadLine();
                 Console.CursorVisible = false;
 
                 if (!string.IsNullOrWhiteSpace(attribName) && attribName.All(char.IsLetter))
                     break;
 
-                Console.WriteLine("\nVirheellinen nimi:");
-                Console.WriteLine("Saa sisältää vain kirjaimia");
+                Console.WriteLine("\nInvalid name:");
+                Console.WriteLine("Can only contain letters");
                 Console.ReadKey(true);
                 ClearValidationFeedback(3);
             }
@@ -128,15 +128,15 @@ class Menu
             while (true)
             {
                 Console.CursorVisible = true;
-                Console.Write("Syötä ominaisuuden arvo: ");
+                Console.Write("Enter attribute value: ");
                 attribValue = Console.ReadLine();
                 Console.CursorVisible = false;
 
                 if (attribValue == "" || (!string.IsNullOrWhiteSpace(attribValue) && attribValue.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c))))
                     break;
 
-                Console.WriteLine("\nVirheellinen arvo:");
-                Console.WriteLine("Saa sisältää vain kirjaimia, numeroita tai välilyöntejä");
+                Console.WriteLine("\nInvalid value:");
+                Console.WriteLine("Can only contain letters, numbers, or spaces");
                 Console.ReadKey(true);
                 ClearValidationFeedback(3);
             }
@@ -150,13 +150,13 @@ class Menu
 
             Console.Clear();
 
-            string question = ("Lisätäänkö vielä ominaisuuksia?");
-            string[] choices = { "Kyllä", "Ei" };
+            string question = ("Add more attributes?");
+            string[] choices = { "Yes", "No" };
 
             PrintMenu(question, choices);
             string choice = NavigateMenu(question, choices);
 
-            if (choice == "Ei")
+            if (choice == "No")
             {
                 Console.Clear();
                 break;
@@ -229,7 +229,7 @@ class Menu
                 }
             }
 
-            items.Add("Palaa");
+            items.Add("Back");
 
             return items.ToArray();
         }
@@ -242,23 +242,23 @@ class Menu
         }
         catch (HttpRequestException e)
         {
-            throw new HttpRequestException($"Hakeminen epäonnistui:\n{e.Message}");
+            throw new HttpRequestException($"Fetching failed:\n{e.Message}");
         }
 
         string prettyJson = JSONPrettyPrint(json);
         string strippedJson = StripJsonSyntaxChars(prettyJson);
 
-        string title = "---- Valitse olio (↑,↓) ----";
+        string title = "---- Select object (↑,↓) ----";
         string[] objects = CreateMenuFromObjects(strippedJson);
 
         PrintMenu(title, objects);
         string selection = NavigateMenu(title, objects);
 
-        if (selection == "Palaa")
+        if (selection == "Back")
             return (false, null);
 
         if (!selection.Contains("_id"))
-            throw new InvalidDataException("Olion resurssitunnusta (_id) ei löytynyt");
+            throw new InvalidDataException("Object resource ID (_id) not found");
 
         int idStart = selection.IndexOf("_id") + 5;
 
@@ -281,7 +281,7 @@ class Menu
         }
         catch (JsonSerializationException) // Or take into account null exception with base class JsonException?
         {
-            throw new JsonSerializationException("JSON merkkijonon jäsentämisessä muotoon JArray tapahtui virhe");
+            throw new JsonSerializationException("Error parsing JSON string to JArray format");
         }
     }
 
